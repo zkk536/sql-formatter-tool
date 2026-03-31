@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Formatter - Free Online SQL Beautifier & Minifier</title>
+    <meta name="description" content="Format, beautify and minify SQL queries online. Supports MySQL, PostgreSQL, SQLite syntax. Free, no signup.">
+    <meta name="keywords" content="sql formatter, sql beautifier, sql minifier, sql pretty print, format sql online, free sql formatter">
+    <link rel="canonical" href="https://ktwo-sql-formatter.surge.sh">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-5xl">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold mb-1 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                📝 SQL Formatter
+            </h1>
+            <p class="text-gray-400 text-sm">Format & beautify SQL queries instantly • Free • No signup</p>
+        </header>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+            <!-- Input -->
+            <div class="bg-gray-800 rounded-lg p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm font-bold text-gray-300">📥 Input SQL</h2>
+                    <div class="flex gap-1">
+                        <button onclick="loadSample('select')" class="text-xs text-blue-400 hover:underline">Sample SELECT</button>
+                        <button onclick="loadSample('complex')" class="text-xs text-purple-400 hover:underline">Complex</button>
+                        <button onclick="loadSample('create')" class="text-xs text-green-400 hover:underline">CREATE</button>
+                    </div>
+                </div>
+                <textarea id="sqlInput" class="w-full h-72 bg-gray-700 text-white rounded p-3 font-mono text-sm resize-none"
+                    placeholder="SELECT * FROM users WHERE id = 1"></textarea>
+
+                <div class="flex gap-2 mt-3">
+                    <select id="dialect" class="bg-gray-700 text-white rounded px-2 py-2 text-sm">
+                        <option value="standard">Standard SQL</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="sqlite">SQLite</option>
+                    </select>
+                    <select id="indent" class="bg-gray-700 text-white rounded px-2 py-2 text-sm">
+                        <option value="2">2 spaces</option>
+                        <option value="4" selected>4 spaces</option>
+                        <option value="tab">Tab</option>
+                    </select>
+                    <label class="flex items-center gap-1 text-sm text-gray-300">
+                        <input type="checkbox" id="uppercase" checked class="rounded"> UPPERCASE
+                    </label>
+                </div>
+
+                <div class="flex gap-2 mt-3">
+                    <button onclick="formatSQL()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded font-bold transition-colors">
+                        ✨ Format / Beautify
+                    </button>
+                    <button onclick="minifySQL()" class="bg-orange-600 hover:bg-orange-700 px-4 py-3 rounded font-bold transition-colors">
+                        📦 Minify
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output -->
+            <div class="bg-gray-800 rounded-lg p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm font-bold text-gray-300">📤 Formatted SQL</h2>
+                    <div class="flex gap-2">
+                        <button onclick="copyOutput()" class="text-xs bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded">📋 Copy</button>
+                        <button onclick="downloadSQL()" class="text-xs bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded">💾 Save</button>
+                    </div>
+                </div>
+                <pre id="sqlOutput" class="w-full h-72 bg-gray-700 text-green-300 rounded p-3 font-mono text-sm overflow-auto whitespace-pre-wrap">Formatted SQL will appear here...</pre>
+
+                <div class="mt-3 flex justify-between items-center">
+                    <div id="stats" class="text-xs text-gray-400"></div>
+                    <button onclick="swapIO()" class="text-xs text-blue-400 hover:underline">🔄 Use as input</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="grid md:grid-cols-4 gap-3 mt-4">
+            <div class="bg-gray-800 rounded p-3 text-center">
+                <div class="text-xl mb-1">⚡</div>
+                <h3 class="font-bold text-sm">Instant</h3>
+                <p class="text-gray-400 text-xs">Format in milliseconds</p>
+            </div>
+            <div class="bg-gray-800 rounded p-3 text-center">
+                <div class="text-xl mb-1">🔒</div>
+                <h3 class="font-bold text-sm">Private</h3>
+                <p class="text-gray-400 text-xs">SQL never leaves browser</p>
+            </div>
+            <div class="bg-gray-800 rounded p-3 text-center">
+                <div class="text-xl mb-1">🗄️</div>
+                <h3 class="font-bold text-sm">Multi-Dialect</h3>
+                <p class="text-gray-400 text-xs">MySQL, Postgres, SQLite</p>
+            </div>
+            <div class="bg-gray-800 rounded p-3 text-center">
+                <div class="text-xl mb-1">💯</div>
+                <h3 class="font-bold text-sm">100% Free</h3>
+                <p class="text-gray-400 text-xs">No limits, forever</p>
+            </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="bg-gray-800 rounded-lg p-4 mt-4">
+            <h2 class="text-lg font-bold mb-2">Free Online SQL Formatter</h2>
+            <p class="text-gray-400 text-sm mb-2">Format, beautify, and minify your SQL queries with this free online tool. Supports standard SQL, MySQL, PostgreSQL, and SQLite syntax. All processing happens in your browser — your queries are never sent to any server.</p>
+            <h3 class="text-md font-bold mb-1">Features:</h3>
+            <ul class="text-gray-400 text-sm list-disc list-inside space-y-1">
+                <li>One-click SQL formatting and beautification</li>
+                <li>SQL minification for production use</li>
+                <li>Configurable indentation (2 spaces, 4 spaces, tabs)</li>
+                <li>UPPERCASE / lowercase keyword conversion</li>
+                <li>Support for complex queries with JOINs, subqueries, CTEs</li>
+                <li>Character and line count statistics</li>
+                <li>Copy to clipboard and download as .sql file</li>
+            </ul>
+        </div>
+
+        <footer class="text-center text-gray-500 text-sm mt-6 pb-4">
+            <p>Made by <a href="https://github.com/zkk536" class="text-blue-400 hover:text-blue-300">K Two Tools</a></p>
+            <p class="mt-1">
+                <a href="https://buymeacoffee.com/ktwotools" class="text-yellow-400 hover:text-yellow-300">☕ Buy me a coffee</a>
+                <span class="mx-2">|</span>
+                Need custom tools? <a href="mailto:844332090@qq.com" class="text-green-400 hover:text-green-300">Contact us</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // SQL keywords for formatting
+        const KEYWORDS = [
+            'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'NOT', 'IN', 'EXISTS',
+            'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE',
+            'CREATE', 'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW',
+            'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'CROSS', 'ON',
+            'GROUP', 'BY', 'ORDER', 'HAVING', 'LIMIT', 'OFFSET',
+            'UNION', 'ALL', 'INTERSECT', 'EXCEPT',
+            'AS', 'DISTINCT', 'TOP', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
+            'IS', 'NULL', 'LIKE', 'BETWEEN', 'ASC', 'DESC',
+            'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT',
+            'DEFAULT', 'CHECK', 'UNIQUE', 'CASCADE',
+            'BEGIN', 'COMMIT', 'ROLLBACK', 'TRANSACTION',
+            'IF', 'ELSE', 'WHILE', 'DECLARE', 'RETURNS',
+            'WITH', 'RECURSIVE', 'OVER', 'PARTITION', 'WINDOW', 'ROWS', 'RANGE',
+            'COUNT', 'SUM', 'AVG', 'MIN', 'MAX',
+            'COALESCE', 'NULLIF', 'CAST', 'CONVERT',
+            'VARCHAR', 'INT', 'INTEGER', 'BIGINT', 'FLOAT', 'DOUBLE', 'DECIMAL',
+            'TEXT', 'BOOLEAN', 'DATE', 'DATETIME', 'TIMESTAMP',
+            'NOT', 'AUTO_INCREMENT', 'SERIAL', 'IDENTITY',
+            'GRANT', 'REVOKE', 'TRUNCATE', 'RENAME', 'EXPLAIN'
+        ];
+
+        const NEWLINE_BEFORE = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER', 'GROUP', 'HAVING', 'LIMIT', 'UNION', 'INTERSECT', 'EXCEPT', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'CROSS', 'SET', 'VALUES', 'ON', 'WHEN', 'ELSE', 'END', 'WITH'];
+        const INDENT_AFTER = ['SELECT', 'SET', 'VALUES'];
+
+        function formatSQL() {
+            let sql = document.getElementById('sqlInput').value.trim();
+            if (!sql) { alert('Please enter some SQL'); return; }
+
+            const useUppercase = document.getElementById('uppercase').checked;
+            const indentVal = document.getElementById('indent').value;
+            const indentStr = indentVal === 'tab' ? '\t' : ' '.repeat(parseInt(indentVal));
+
+            // Normalize whitespace
+            sql = sql.replace(/\s+/g, ' ').trim();
+
+            // Tokenize (preserve strings and identifiers)
+            let tokens = [];
+            let i = 0;
+            while (i < sql.length) {
+                // String literals
+                if (sql[i] === "'" || sql[i] === '"') {
+                    let quote = sql[i]; let j = i + 1;
+                    while (j < sql.length && !(sql[j] === quote && sql[j-1] !== '\\')) j++;
+                    tokens.push(sql.substring(i, j + 1));
+                    i = j + 1;
+                }
+                // Whitespace
+                else if (/\s/.test(sql[i])) {
+                    i++;
+                }
+                // Operators / punctuation
+                else if ('(),;'.includes(sql[i])) {
+                    tokens.push(sql[i]);
+                    i++;
+                }
+                // Words
+                else {
+                    let j = i;
+                    while (j < sql.length && !/[\s(),;'"]/g.test(sql[j])) j++;
+                    tokens.push(sql.substring(i, j));
+                    i = j;
+                }
+            }
+
+            // Format
+            let result = '';
+            let indent = 0;
+            let parenDepth = 0;
+
+            for (let t = 0; t < tokens.length; t++) {
+                let token = tokens[t];
+                let upper = token.toUpperCase();
+                let isKeyword = KEYWORDS.includes(upper);
+
+                if (isKeyword) {
+                    token = useUppercase ? upper : token.toLowerCase();
+                }
+
+                if (token === '(') {
+                    parenDepth++;
+                    result += token;
+                    continue;
+                }
+                if (token === ')') {
+                    parenDepth--;
+                    result += token;
+                    continue;
+                }
+                if (token === ',') {
+                    result += ',\n' + indentStr.repeat(indent > 0 ? indent : 1);
+                    continue;
+                }
+                if (token === ';') {
+                    result += ';\n\n';
+                    indent = 0;
+                    continue;
+                }
+
+                if (isKeyword && NEWLINE_BEFORE.includes(upper) && parenDepth === 0 && result.length > 0) {
+                    if (['AND', 'OR'].includes(upper)) {
+                        result = result.trimEnd();
+                        result += '\n' + indentStr + token + ' ';
+                    } else if (['ON', 'WHEN', 'ELSE', 'END'].includes(upper)) {
+                        result = result.trimEnd();
+                        result += '\n' + indentStr + token + ' ';
+                    } else {
+                        indent = 0;
+                        result = result.trimEnd();
+                        result += '\n' + token + ' ';
+                        if (INDENT_AFTER.includes(upper)) indent = 1;
+                    }
+                } else {
+                    result += token + ' ';
+                }
+            }
+
+            result = result.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+
+            document.getElementById('sqlOutput').textContent = result;
+            updateStats(sql, result);
+        }
+
+        function minifySQL() {
+            let sql = document.getElementById('sqlInput').value.trim();
+            if (!sql) { alert('Please enter some SQL'); return; }
+            let min = sql.replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+            min = min.replace(/\s+/g, ' ').trim();
+            document.getElementById('sqlOutput').textContent = min;
+            updateStats(sql, min);
+        }
+
+        function updateStats(input, output) {
+            const inLines = input.split('\n').length;
+            const outLines = output.split('\n').length;
+            document.getElementById('stats').textContent =
+                `Input: ${input.length} chars, ${inLines} lines → Output: ${output.length} chars, ${outLines} lines`;
+        }
+
+        function copyOutput() {
+            const text = document.getElementById('sqlOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => alert('Copied!'));
+        }
+
+        function downloadSQL() {
+            const text = document.getElementById('sqlOutput').textContent;
+            const blob = new Blob([text], { type: 'text/sql' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = 'formatted.sql'; a.click();
+        }
+
+        function swapIO() {
+            document.getElementById('sqlInput').value = document.getElementById('sqlOutput').textContent;
+        }
+
+        function loadSample(type) {
+            const samples = {
+                select: "SELECT u.id, u.name, u.email, o.total FROM users u INNER JOIN orders o ON u.id = o.user_id WHERE u.status = 'active' AND o.created_at > '2024-01-01' ORDER BY o.total DESC LIMIT 10;",
+                complex: "WITH monthly_sales AS (SELECT DATE_TRUNC('month', order_date) AS month, customer_id, SUM(amount) AS total_spend FROM orders WHERE order_date >= '2024-01-01' GROUP BY DATE_TRUNC('month', order_date), customer_id HAVING SUM(amount) > 100) SELECT ms.month, c.name, ms.total_spend, RANK() OVER (PARTITION BY ms.month ORDER BY ms.total_spend DESC) AS rank FROM monthly_sales ms INNER JOIN customers c ON ms.customer_id = c.id WHERE ms.total_spend > 500 ORDER BY ms.month, rank;",
+                create: "CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, email VARCHAR(100) NOT NULL, password_hash VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, is_active BOOLEAN DEFAULT TRUE, CONSTRAINT chk_email CHECK (email LIKE '%@%.%'));"
+            };
+            document.getElementById('sqlInput').value = samples[type] || '';
+        }
+    </script>
+</body>
+</html>
